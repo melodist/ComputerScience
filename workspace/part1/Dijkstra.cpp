@@ -98,12 +98,35 @@ int main(void) {
 	}
 	priorityQueue* pq = new priorityQueue;
 	pq->count = 0;
-	int a, b, c;
-	cin >> a >> b >> c;
-	Edge* edge = new Edge;
-	edge->node = b;
-	edge->cost = c;
-	addNode(adj, a, edge);
+	for (int i = 0; i < m; i++) {
+		int a, b, c;
+		cin >> a >> b >> c;
+		Edge* edge = new Edge;
+		edge->node = b;
+		edge->cost = c;
+		addNode(adj, a, edge);
+	}
 
 	ans[k] = 0;
+	Edge* start = new Edge;
+	start->cost = 0; start->node = k; push(pq, start);
+	while (1) {
+		Edge* now = pop(pq);
+		if (now == NULL) break;
+		int curNode = now->node;
+		int curCost = now->cost;
+		if (ans[curNode] < curCost) continue;
+		Node* cur = adj[curNode];
+		while (cur != NULL) {
+			Edge* temp = cur->data;
+			temp->cost += curCost;
+			if (temp->cost < ans[temp->node]) { ans[temp->node] = temp->cost; push(pq, temp); }
+			cur = cur->next;
+		}
+	}
+	for (int i = 1; i <= n; i++) {
+		if (ans[i] == INT_MAX) cout << "INF" << endl;
+		else cout << ans[i] << endl;
+	}
+	return 0;
 }
